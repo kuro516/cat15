@@ -417,6 +417,11 @@ body{ background:linear-gradient(180deg,#060912 0%,#0b1426 45%,#16213a 80%,#1d2a
 .sec-p{ font-size:13px; color:var(--ink-soft); margin:0 0 12px 34px; line-height:1.7; }
 .hero .btn.wide{ margin-top:6px; }
 @media (prefers-reduced-motion: reduce){ .fan .fc{ animation:none; } }
+
+/* 下の「戻る」：画面が長くても、いつでも親指の届く位置に */
+.backbar{ position:sticky; bottom:0; z-index:8; display:flex; justify-content:center; padding:18px 0 calc(12px + env(safe-area-inset-bottom)); background:linear-gradient(rgba(8,13,26,0), rgba(8,13,26,.92) 45%); pointer-events:none; }
+.backbar[hidden]{ display:none; }
+.backbar .btn{ pointer-events:auto; min-width:60%; box-shadow:0 4px 16px rgba(0,0,0,.5); }
 </style></head><body>
 <div class="sky" id="sky" aria-hidden="true"></div>
 <div class="wrap">
@@ -481,6 +486,8 @@ body{ background:linear-gradient(180deg,#060912 0%,#0b1426 45%,#16213a 80%,#1d2a
   <section id="summary" class="sum" hidden></section>
 
   <section id="cards" class="dex" hidden></section>
+
+  <div class="backbar" id="backBar" hidden><button class="btn secondary" id="backBottom" type="button">← 戻る</button></div>
 </div>
 
 <div class="overlay" id="overlay"><div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="読み解き"></div></div>
@@ -1128,6 +1135,7 @@ function later(fn, ms){ const id = S.sid; return setTimeout(() => { if (id === S
 function show(name){
   ["home", "table", "summary", "cards", "game", "daily"].forEach(n => { $("#" + n).hidden = (n !== name); });
   S.phase = name;
+  $("#backBar").hidden = (name === "home");
   window.scrollTo(0, 0);
   const tr = $("#topRight");
   tr.innerHTML = "";
@@ -2243,6 +2251,7 @@ function renderDaily(){
   });
 }
 $("#toDaily").addEventListener("click", startDaily);
+$("#backBottom").addEventListener("click", goHome);
 
 /* ---------- ホームの扇形カード ---------- */
 function renderFan(){
